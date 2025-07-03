@@ -16,6 +16,7 @@ def index():
 def upload():
     file = request.files['file']
     if file and file.filename != '':
+        #TODO: Update the file save to azure code
         file.save(os.path.join(UPLOAD_FOLDER, file.filename))
     return redirect(url_for('index'))
 if __name__ == '__main__':
