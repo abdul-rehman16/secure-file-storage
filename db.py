@@ -25,7 +25,7 @@ Connection Timeout=90;
 def get_connection():
     return pyodbc.connect(connection_string)
 
-# 🧪 Optional: quick test if connection works
+#  Optional: quick test if connection works
 if __name__ == '__main__':
     try:
         conn = get_connection()
