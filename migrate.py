@@ -2,78 +2,44 @@ import os
 from dotenv import load_dotenv, find_dotenv
 import pyodbc
 
-# ——— DEBUG & ENV LOADING ———
-print("📂 Current working directory:", os.getcwd())
+# ——— Load environment variables —————————————————————————————————————
 env_path = find_dotenv()
-print("🔍 .env found at:", env_path)
 load_dotenv(env_path)
 
-# ——— BUILD CONNECTION STRING ———
-server   = os.getenv("DB_SERVER")
-database = os.getenv("DB_DATABASE")
-user     = os.getenv("DB_USER")
-pwd      = os.getenv("DB_PASSWORD")
+# ——— Grab the same connection string your app uses ————————————————————
+conn_str = os.getenv("AZURE_SQL_CONN_STR")
+if not conn_str:
+    raise RuntimeError("❌ Missing AZURE_SQL_CONN_STR in .env")
 
-missing = [name for name,val in [
-    ("DB_SERVER", server),
-    ("DB_DATABASE", database),
-    ("DB_USER", user),
-    ("DB_PASSWORD", pwd),
-] if not val]
-if missing:
-    raise RuntimeError(f"❌ Missing env vars: {', '.join(missing)}")
-
-conn_str = (
-    "Driver={ODBC Driver 17 for SQL Server};"
-    f"Server=tcp:{server},1433;"
-    f"Database={database};"
-    f"Uid={user}@{server};"
-    f"Pwd={pwd};"
-    "Encrypt=yes;"
-    "TrustServerCertificate=no;"
-    "Connection Timeout=30;"
-)
-masked = conn_str.replace(pwd, "****")
-print("🔍 conn_str:", masked)
-print("   type:", type(conn_str))
-
-
-# ——— T-SQL DDL STATEMENTS ———
-# Each statement checks for existence via sys.tables then creates
+# ——— DDL statements to ensure tables exist —————————————————————————
 ddl_statements = [
+    # Create Users table
     """
     IF NOT EXISTS (
-      SELECT 1
-      FROM sys.tables
-      WHERE name = 'Users'
+      SELECT * FROM sys.tables WHERE name = 'Users'
     )
-    BEGIN
-      CREATE TABLE Users (
-        user_id INT IDENTITY(1,1) PRIMARY KEY,
-        username NVARCHAR(50) NOT NULL UNIQUE,
-        password_hash NVARCHAR(255) NOT NULL,
-        email NVARCHAR(100) UNIQUE NOT NULL,
-        created_at DATETIME2 DEFAULT SYSUTCDATETIME()
-      );
-    END
+    CREATE TABLE Users (
+      user_id INT IDENTITY(1,1) PRIMARY KEY,
+      username NVARCHAR(50) NOT NULL UNIQUE,
+      password_hash NVARCHAR(255) NOT NULL,
+      email NVARCHAR(100) NOT NULL UNIQUE,
+      created_at DATETIME2 DEFAULT SYSUTCDATETIME()
+    );
     """,
+
+    # Create Files table
     """
     IF NOT EXISTS (
-      SELECT 1
-      FROM sys.tables
-      WHERE name = 'Files'
+      SELECT * FROM sys.tables WHERE name = 'Files'
     )
-    BEGIN
-      CREATE TABLE Files (
-        file_id INT IDENTITY(1,1) PRIMARY KEY,
-        user_id INT NOT NULL
-          CONSTRAINT FK_Files_Users REFERENCES Users(user_id),
-        file_name NVARCHAR(255) NOT NULL,
-        blob_url NVARCHAR(500) NOT NULL,
-        encryption_iv VARBINARY(16),
-        uploaded_at DATETIME2 DEFAULT SYSUTCDATETIME()
-      );
-    END
+    CREATE TABLE Files (
+      file_id      INT IDENTITY(1,1) PRIMARY KEY,
+      user_id      INT NOT NULL REFERENCES Users(user_id),
+      file_name    NVARCHAR(255) NOT NULL,
+      blob_url     NVARCHAR(500) NOT NULL,
+      encryption_iv VARBINARY(16),
+      uploaded_at  DATETIME2 DEFAULT SYSUTCDATETIME()
+    );
     """
 ]
 
@@ -84,7 +50,7 @@ def run_migration():
             for stmt in ddl_statements:
                 cursor.execute(stmt)
             conn.commit()
-        print("🎉 Tables created (or already exist) successfully!")
+        print("🎉 Migration succeeded: tables are ready!")
     except Exception as e:
         print("⚠️ Migration failed:", e)
 

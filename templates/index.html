@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html lang="">
-<head>
-    <title>Secure File Storage</title>
-</head>
-<body>
+{% extends 'layout.html' %}
+{% block title %}Your Files{% endblock %}
+
+{% block content %}
 <h1>Upload a File</h1>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file">
+<form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
     <button type="submit">Upload</button>
 </form>
 
-<h2>Uploaded Files:</h2>
+<h2>Stored Files</h2>
 <ul>
-    {% for file in files %}
-    <li>{{ file }}</li>
+    {% if files %}
+    {% for f in files %}
+    <li>
+        {{ f.original_name }} –
+        <a href="{{ url_for('download', blob_name=f.blob_name) }}">Download</a>
+        (uploaded {{ f.uploaded_at }})
+    </li>
     {% endfor %}
+    {% else %}
+    <li>No files uploaded yet.</li>
+    {% endif %}
 </ul>
-</body>
-</html>
+{% endblock %}
