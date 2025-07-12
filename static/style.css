@@ -1,0 +1,70 @@
+/* Center all main content */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+}
+
+/* Card container */
+.card {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Form elements */
+.card form {
+    display: flex;
+    flex-direction: column;
+}
+
+.card label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.card input {
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
+.card button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: #4a90e2;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.card button:hover {
+    background: #357ABD;
+}
+
+/* Flash messages */
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin: 1rem auto;
+    max-width: 400px;
+}
+
+.flashes li {
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.flashes .success { background: #e0f8e9; color: #2d7a3a; }
+.flashes .warning { background: #fff4e5; color: #a75d00; }
+.flashes .danger  { background: #fde2e1; color: #a1271d; }
+.flashes .info    { background: #e8f1fc; color: #1e4f8b; }
