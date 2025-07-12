@@ -2,3 +2,9 @@
 .env
 echo ".env" >> .gitignore
 .env
+
+# macOS system files
+.DS_Store
+
+# Python venv
+.venv/
