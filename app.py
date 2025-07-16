@@ -20,7 +20,7 @@ from encryption.crypto_utils import encrypt_file, decrypt_file
 # ─── Load environment & instantiate app ──────────────────────────────────────
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY")  # generate via `secrets.token_urlsafe(32)`
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # ─── Flask-Login setup ───────────────────────────────────────────────────────
 login_manager = LoginManager(app)
@@ -29,7 +29,6 @@ login_manager.login_view = "login"
 @login_manager.user_loader
 def load_user(user_id):
     return User.get_by_id(int(user_id))
-
 
 # ─── Azure + SQL configuration ───────────────────────────────────────────────
 SQL_CONN_STR   = os.getenv("AZURE_SQL_CONN_STR")
@@ -41,8 +40,7 @@ container_client = blob_service.get_container_client(CONTAINER_NAME)
 try:
     container_client.create_container()
 except Exception:
-    pass  # already exists
-
+    pass  # container already exists
 
 def insert_metadata(user_id, filename, blob_name):
     with pyodbc.connect(SQL_CONN_STR) as conn:
@@ -53,7 +51,6 @@ def insert_metadata(user_id, filename, blob_name):
             VALUES (?, ?, ?, NULL, ?)
         """, user_id, filename, blob_name, datetime.utcnow())
         conn.commit()
-
 
 # ─── AUTHENTICATION ROUTES ───────────────────────────────────────────────────
 
@@ -95,7 +92,7 @@ def login():
             return redirect(url_for('login'))
 
         login_user(user)
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
 
     return render_template('login.html')
 
@@ -108,22 +105,26 @@ def logout():
     return redirect(url_for('login'))
 
 
-# ─── FILE UPLOAD / DOWNLOAD ──────────────────────────────────────────────────
+# ─── DASHBOARD / UPLOAD / DOWNLOAD PAGES ─────────────────────────────────────
 
 @app.route('/')
+def home():
+    return redirect(url_for('login'))
+
+
+@app.route('/dashboard')
 @login_required
-def index():
+def dashboard():
     with pyodbc.connect(SQL_CONN_STR) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT
-              file_id    AS id,
-              file_name       AS original_name,
-              blob_url        AS blob_name,
-              uploaded_at
-            FROM Files
-            WHERE user_id = ?
-            ORDER BY uploaded_at DESC
+            SELECT file_id AS id,
+                   file_name AS original_name,
+                   blob_url AS blob_name,
+                   uploaded_at
+              FROM Files
+             WHERE user_id = ?
+          ORDER BY uploaded_at DESC
         """, current_user.id)
         rows = cursor.fetchall()
 
@@ -131,7 +132,13 @@ def index():
         {'id': r[0], 'original_name': r[1], 'blob_name': r[2], 'uploaded_at': r[3]}
         for r in rows
     ]
-    return render_template('index.html', files=files)
+    return render_template('dashboard.html', files=files)
+
+
+@app.route('/upload', methods=['GET'])
+@login_required
+def upload_page():
+    return render_template('upload.html')
 
 
 @app.route('/upload', methods=['POST'])
@@ -141,12 +148,35 @@ def upload():
     if file and file.filename:
         encrypted = encrypt_file(file.read())
         blob_name = f"{file.filename}.enc"
-        container_client.get_blob_client(blob_name) \
-            .upload_blob(encrypted, overwrite=True)
-
+        container_client.get_blob_client(blob_name).upload_blob(encrypted, overwrite=True)
         insert_metadata(current_user.id, file.filename, blob_name)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/download_page/<blob_name>')
+@login_required
+def download_page(blob_name):
+    with pyodbc.connect(SQL_CONN_STR) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT file_name, uploaded_at
+              FROM Files
+             WHERE user_id = ? AND blob_url = ?
+        """, current_user.id, blob_name)
+        row = cursor.fetchone()
+
+    if not row:
+        flash("File not found or you don’t have permission.", "danger")
+        return redirect(url_for('dashboard'))
+
+    original_name, uploaded_at = row
+    return render_template(
+        'download.html',
+        blob_name=blob_name,
+        original_name=original_name,
+        uploaded_at=uploaded_at
+    )
 
 
 @app.route('/download/<blob_name>')
