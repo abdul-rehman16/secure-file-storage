@@ -17,6 +17,7 @@ from azure.storage.blob import BlobServiceClient
 
 from auth.models import User
 from encryption.crypto_utils import encrypt_file, decrypt_file
+from flask_cors import CORS, cross_origin
 
 # ─── Load environment & instantiate app ──────────────────────────────────────
 load_dotenv()
@@ -190,6 +191,7 @@ def index():
 # ─── UPLOAD (GET & POST) ─────────────────────────────────────────────────────
 
 @app.route('/upload', methods=['GET','POST'])
+@cross_origin(origins="*")
 @login_required
 def upload():
     if request.method == 'POST':
