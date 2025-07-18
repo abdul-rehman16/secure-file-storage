@@ -17,6 +17,8 @@ from azure.storage.blob import BlobServiceClient
 
 from auth.models import User
 from encryption.crypto_utils import encrypt_file, decrypt_file
+from flask import Flask, request, jsonify, render_template, redirect, url_for
+
 from flask_cors import CORS, cross_origin
 
 # ─── Load environment & instantiate app ──────────────────────────────────────
@@ -27,6 +29,15 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 # ─── Flask-Login setup ───────────────────────────────────────────────────────
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+#from flask import Flask
+#from flask_login import LoginManager
+from flask_cors import CORS
+
+#app = Flask(__name__)
+#login_manager = LoginManager(app)
+
+CORS(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -191,7 +202,6 @@ def index():
 # ─── UPLOAD (GET & POST) ─────────────────────────────────────────────────────
 
 @app.route('/upload', methods=['GET','POST'])
-@cross_origin(origins="*")
 @login_required
 def upload():
     if request.method == 'POST':
