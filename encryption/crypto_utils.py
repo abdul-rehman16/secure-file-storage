@@ -5,7 +5,7 @@ from cryptography.fernet import Fernet
 # print(key.decode())  # Copy this and paste it below
 
 # 🔐 Paste the key you generated here
-key = b'J6217BoR02o4rLa5P-aFWJ-jwO4bVg244sCQYiAqd8g='
+key = b'='
 
 fernet = Fernet(key)
 
