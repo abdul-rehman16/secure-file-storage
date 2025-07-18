@@ -1,10 +1,16 @@
 {% extends "layout.html" %}
-{% block title %}Download File{% endblock %}
+{% block title %}Download{% endblock %}
 {% block content %}
-<h1>Download “{{ original_name }}”</h1>
-<p>Uploaded at: {{ uploaded_at }}</p>
-<a href="{{ url_for('download', blob_name=blob_name) }}">
-  <button>Download Now</button>
-</a>
-<p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
+<h1>Download</h1>
+<ul class="file-list">
+  {% for f in files %}
+  <li>
+    <div class="file-info">
+      <strong>{{ f.original_name }}</strong>
+      <small>{{ f.uploaded_at }}</small>
+    </div>
+    <a href="{{ url_for('download', blob_name=f.blob_name) }}" class="btn-download">⬇️</a>
+  </li>
+  {% endfor %}
+</ul>
 {% endblock %}

@@ -1,25 +1,44 @@
-{% extends 'layout.html' %}
-{% block title %}Your Files{% endblock %}
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1>Upload a File</h1>
-<form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <button type="submit">Upload</button>
-</form>
+<section class="profile-section">
+    <h2>Your Account</h2>
+    <form action="{{ url_for('index') }}" method="post" class="profile-form">
+        <label for="username">Username</label>
+        <input type="text"
+               id="username"
+               name="username"
+               value="{{ current_username }}"
+               required>
 
-<h2>Stored Files</h2>
-<ul>
-    {% if files %}
-    {% for f in files %}
-    <li>
-        {{ f.original_name }} –
-        <a href="{{ url_for('download', blob_name=f.blob_name) }}">Download</a>
-        (uploaded {{ f.uploaded_at }})
-    </li>
-    {% endfor %}
-    {% else %}
-    <li>No files uploaded yet.</li>
-    {% endif %}
-</ul>
+        <label for="password">New Password</label>
+        <input type="password"
+               id="password"
+               name="password"
+               placeholder="Leave blank to keep current">
+
+        <button type="submit" class="btn">Save Changes</button>
+    </form>
+</section>
+
+<section class="files-section">
+    <h2>Your Files</h2>
+    <ul class="file-list">
+        {% for f in files %}
+        <li>
+            <span class="file-name">{{ f.original_name }}</span>
+            <span class="file-date">{{ f.uploaded_at }}</span>
+            <form
+                    action="{{ url_for('download', blob_name=f.blob_name) }}"
+                    method="get"
+                    class="download-form">
+                <button type="submit" class="btn-small">Download</button>
+            </form>
+        </li>
+        {% else %}
+        <li>No files uploaded yet.</li>
+        {% endfor %}
+    </ul>
+</section>
 {% endblock %}

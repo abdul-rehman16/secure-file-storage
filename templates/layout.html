@@ -1,37 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Secure File Storage{% endblock %}</title>
+    <title>{% block title %}{% endblock %} – SecureStore</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<header>
-    <nav>
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('upload_page') }}">Upload</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('signup') }}">Sign Up</a>
-        {% endif %}
+<div class="container">
+    <nav class="sidebar">
+        <div class="logo">☁️ SecureStore</div>
+        <a href="{{ url_for('index') }}" class="nav-link">
+            <span class="btn">Dashboard</span>
+        </a>
+        <a href="{{ url_for('upload') }}" class="nav-link">
+            <span class="btn">Upload</span>
+        </a>
+        <form action="{{ url_for('logout') }}" method="get" class="logout-form">
+            <button type="submit" class="btn">Log Out</button>
+        </form>
     </nav>
-</header>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<ul class="flashes">
-    {% for category, msg in messages %}
-    <li class="{{ category }}">{{ msg }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-
-<main>
-    {% block content %}{% endblock %}
-</main>
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+        <div class="flash flash-{{cat}}">{{ msg }}</div>
+        {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
 </body>
 </html>

@@ -1,10 +1,14 @@
 {% extends "layout.html" %}
 {% block title %}Upload File{% endblock %}
+
 {% block content %}
-<h1>Upload a File</h1>
-<form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <button type="submit">Upload</button>
+<h1>Upload a New File</h1>
+<form action="{{ url_for('upload') }}"
+      method="post"
+      enctype="multipart/form-data"
+      class="upload-form">
+    <label for="file">Choose file to upload</label>
+    <input type="file" name="file" id="file" required>
+    <button type="submit" class="btn">Upload</button>
 </form>
-<p><a href="{{ url_for('dashboard') }}">← Back to Dashboard</a></p>
 {% endblock %}

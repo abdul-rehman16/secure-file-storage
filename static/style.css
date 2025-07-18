@@ -1,70 +1,116 @@
-/* Center all main content */
-main {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 2rem;
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+}
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: #f5f6f8;
+    color: #1a1a1a;
 }
 
-/* Card container */
-.card {
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 2rem;
-    max-width: 400px;
-    width: 100%;
+/* ===== Layout ===== */
+.container { display: flex; min-height: 100vh; }
+.sidebar {
+    width: 240px;
+    background: #001f3f;
+    padding: 1rem;
+    display: flex; flex-direction: column;
+}
+.sidebar .logo {
+    color: #fff; font-size: 1.5rem;
+    margin-bottom: 2rem; text-align: center;
+}
+.nav-link { margin-bottom: 1rem; text-decoration: none; }
+.nav-link .btn { width: 100%; }
+.logout-form { margin-top: auto; }
+.main-content {
+    flex: 1; padding: 2rem;
+    background: #f5f6f8;
 }
 
-/* Form elements */
-.card form {
-    display: flex;
-    flex-direction: column;
-}
-
-.card label {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.card input {
-    padding: 0.6rem 0.8rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
+/* ===== Buttons ===== */
+.btn, button {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
     font-size: 1rem;
-}
-
-.card button {
-    padding: 0.75rem;
-    border: none;
-    border-radius: 0.25rem;
-    background: #4a90e2;
-    color: white;
-    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: #001f3f;
+    border: 2px solid #89bc2b;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s ease-in-out;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
+}
+.btn:hover { background: #004080; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
 }
 
-.card button:hover {
-    background: #357ABD;
+/* ===== Flash Messages ===== */
+.flash {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    color: #fff;
+}
+.flash-success { background: #28a745; }
+.flash-info    { background: #17a2b8; }
+.flash-warning { background: #ffc107; color: #111; }
+.flash-danger  { background: #dc3545; }
+
+/* ===== Profile Section ===== */
+.profile-section { max-width: 400px; margin-bottom: 2rem; }
+.profile-section h2 { margin-bottom: 1rem; }
+.profile-form label {
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+.profile-form input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
-/* Flash messages */
-.flashes {
+/* ===== Files Section ===== */
+.files-section h2 { margin-bottom: 1rem; }
+.file-list {
     list-style: none;
     padding: 0;
-    margin: 1rem auto;
+    max-width: 600px;
+}
+.file-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #ddd;
+}
+.file-name { flex: 1; }
+.file-date { color: #666; margin: 0 1rem; }
+.download-form { margin-left: auto; }
+
+/* ===== Upload Form ===== */
+.upload-form {
     max-width: 400px;
+    margin: 0 auto;
 }
-
-.flashes li {
-    padding: 0.75rem 1rem;
-    border-radius: 0.25rem;
+.upload-form label {
+    display: block;
     margin-bottom: 0.5rem;
+    font-weight: bold;
 }
-
-.flashes .success { background: #e0f8e9; color: #2d7a3a; }
-.flashes .warning { background: #fff4e5; color: #a75d00; }
-.flashes .danger  { background: #fde2e1; color: #a1271d; }
-.flashes .info    { background: #e8f1fc; color: #1e4f8b; }
+.upload-form input[type="file"] {
+    margin-bottom: 1rem;
+}
