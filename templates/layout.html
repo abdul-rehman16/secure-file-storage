@@ -5,20 +5,19 @@
     <title>{% block title %}{% endblock %} – SecureStore</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="{% if not current_user.is_authenticated %}auth-page{% endif %}">
 <div class="container">
+    {% if current_user.is_authenticated %}
     <nav class="sidebar">
         <div class="logo">☁️ SecureStore</div>
-        <a href="{{ url_for('index') }}" class="nav-link">
-            <span class="btn">Dashboard</span>
-        </a>
-        <a href="{{ url_for('upload') }}" class="nav-link">
-            <span class="btn">Upload</span>
-        </a>
-        <form action="{{ url_for('logout') }}" method="get" class="logout-form">
-            <button type="submit" class="btn">Log Out</button>
+        <a href="{{ url_for('index') }}" class="nav-link{% if request.endpoint=='index' %} active{% endif %}">Dashboard</a>
+        <a href="{{ url_for('upload') }}" class="nav-link{% if request.endpoint=='upload' %} active{% endif %}">Upload</a>
+        <form action="{{ url_for('logout') }}" method="get">
+            <button type="submit" class="logout-btn">Log Out</button>
         </form>
     </nav>
+    {% endif %}
+
     <main class="main-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% for cat, msg in messages %}

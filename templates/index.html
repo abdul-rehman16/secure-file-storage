@@ -2,26 +2,24 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+<!-- ─── Inline Profile Section ─────────────────────────────────────────── -->
 <section class="profile-section">
-    <h2>Your Account</h2>
+    <h2>Hello, {{ current_username }}! <small>Update Credentials</small></h2>
     <form action="{{ url_for('index') }}" method="post" class="profile-form">
-        <label for="username">Username</label>
-        <input type="text"
-               id="username"
-               name="username"
-               value="{{ current_username }}"
-               required>
-
-        <label for="password">New Password</label>
-        <input type="password"
-               id="password"
-               name="password"
-               placeholder="Leave blank to keep current">
-
+        <label>
+            Username
+            <input type="text" name="username" value="{{ current_username }}" />
+        </label>
+        <label>
+            New Password
+            <input type="password" name="password" placeholder="Leave blank to keep current" />
+        </label>
         <button type="submit" class="btn">Save Changes</button>
     </form>
+    <hr>
 </section>
 
+<!-- ─── Files List Section ─────────────────────────────────────────────── -->
 <section class="files-section">
     <h2>Your Files</h2>
     <ul class="file-list">
@@ -29,11 +27,20 @@
         <li>
             <span class="file-name">{{ f.original_name }}</span>
             <span class="file-date">{{ f.uploaded_at }}</span>
-            <form
-                    action="{{ url_for('download', blob_name=f.blob_name) }}"
-                    method="get"
-                    class="download-form">
+
+            <!-- Download -->
+            <form action="{{ url_for('download', blob_name=f.blob_name) }}"
+                  method="get"
+                  class="inline-form">
                 <button type="submit" class="btn-small">Download</button>
+            </form>
+
+            <!-- Delete -->
+            <form action="{{ url_for('delete_file', file_id=f.id) }}"
+                  method="post"
+                  class="inline-form"
+                  onsubmit="return confirm('Delete this file?');">
+                <button type="submit" class="btn-small btn-danger">Delete</button>
             </form>
         </li>
         {% else %}

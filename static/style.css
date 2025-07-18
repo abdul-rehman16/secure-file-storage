@@ -1,116 +1,256 @@
-/* ===== Reset & Base ===== */
+/* ===============================================
+   1) GLOBAL RESET & TYPOGRAPHY
+   =============================================== */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
 }
+
 html, body {
     height: 100%;
+    margin: 0;
     font-family: Arial, sans-serif;
-    background: #f5f6f8;
-    color: #1a1a1a;
+    color: #0a1f44;
 }
 
-/* ===== Layout ===== */
-.container { display: flex; min-height: 100vh; }
+/* ===============================================
+   2) LAYOUT: container, sidebar & main-content
+   =============================================== */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
 .sidebar {
     width: 240px;
-    background: #001f3f;
+    background-color: #001f3f;
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
-    display: flex; flex-direction: column;
-}
-.sidebar .logo {
-    color: #fff; font-size: 1.5rem;
-    margin-bottom: 2rem; text-align: center;
-}
-.nav-link { margin-bottom: 1rem; text-decoration: none; }
-.nav-link .btn { width: 100%; }
-.logout-form { margin-top: auto; }
-.main-content {
-    flex: 1; padding: 2rem;
-    background: #f5f6f8;
 }
 
-/* ===== Buttons ===== */
-.btn, button {
-    display: inline-block;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
+.sidebar .logo {
+    font-size: 1.25rem;
     color: #fff;
-    background: #001f3f;
-    border: 2px solid #89bc2b;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    text-decoration: none;
+    margin-bottom: 2rem;
+    text-align: center;
 }
-.btn:hover { background: #004080; transform: translateY(-1px); }
-.btn:active { transform: translateY(0); }
+
+/* Nav links */
+.nav-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: #aab3c0;
+    color: #001f3f;
+    border: 3px solid #89bc2b;
+    border-radius: 8px;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #89bc2b;
+    color: #fff;
+}
+
+/* Logout button */
+.logout-btn {
+    margin-top: auto;
+    padding: 0.75rem 1rem;
+    background-color: #aab3c0;
+    color: #001f3f;
+    border: 3px solid #89bc2b;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Main content area */
+.main-content {
+    flex: 1;
+    position: relative;
+    padding: 2rem;
+    background-color: #f5f6f8;
+    overflow: hidden;
+}
+
+/* ===============================================
+   3) FLASH MESSAGES
+   =============================================== */
+.flash-container {
+    margin-bottom: 1rem;
+}
+
+.flash {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.flash-success { background-color: #28a745; }
+.flash-warning { background-color: #ffc107; color: #111; }
+.flash-danger  { background-color: #dc3545; }
+.flash-info    { background-color: #17a2b8; }
+
+/* ===============================================
+   4) BUTTON STYLES
+   =============================================== */
+.btn,
+.btn-small {
+    background-color: #001f3f;
+    color: #fff;
+    border: 2px solid #89bc2b;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
 
 .btn-small {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
 }
 
-/* ===== Flash Messages ===== */
-.flash {
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    border-radius: 4px;
-    color: #fff;
+/* Danger variant */
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #c82333;
 }
-.flash-success { background: #28a745; }
-.flash-info    { background: #17a2b8; }
-.flash-warning { background: #ffc107; color: #111; }
-.flash-danger  { background: #dc3545; }
 
-/* ===== Profile Section ===== */
-.profile-section { max-width: 400px; margin-bottom: 2rem; }
-.profile-section h2 { margin-bottom: 1rem; }
-.profile-form label {
-    display: block;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+.btn:hover {
+    background-color: #004080;
 }
-.profile-form input {
-    width: 100%;
-    padding: 0.6rem;
-    border: 2px solid #ccc;
+
+.btn-small:hover {
+    opacity: 0.9;
+}
+
+/* inline‐form helper */
+.inline-form {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+/* ===============================================
+   5) AUTH FORMS (SIGNUP/LOGIN)
+   =============================================== */
+.auth-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: rgba(196,203,211,0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.auth-container h1 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #001f3f;
+    font-size: 1.75rem;
+}
+
+.auth-container .switch-link {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.auth-container .switch-link a {
+    color: #001f3f;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.auth-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.auth-container input {
+    padding: 0.75rem 1rem;
+    border: 2px solid #fff;
     border-radius: 4px;
     font-size: 1rem;
 }
 
-/* ===== Files Section ===== */
-.files-section h2 { margin-bottom: 1rem; }
-.file-list {
-    list-style: none;
-    padding: 0;
-    max-width: 600px;
+.auth-container button {
+    padding: 0.75rem 1rem;
+    background-color: #001f3f;
+    color: #fff;
+    border: 2px solid #89bc2b;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.2s;
 }
+
+.auth-container button:hover {
+    background-color: #004080;
+}
+
+/* ===============================================
+   6) INLINE PROFILE SECTION
+   =============================================== */
+.profile-section {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.profile-section h2 {
+    margin-bottom: 0.5rem;
+    color: #001f3f;
+}
+
+.profile-form {
+    display: grid;
+    row-gap: 1rem;
+}
+
+.profile-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: #001f3f;
+}
+
+.profile-form input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+}
+
+/* ===============================================
+   7) FILE LISTING ON DASHBOARD
+   =============================================== */
+.files-section .file-list {
+    list-style: none;
+    padding-left: 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 .file-list li {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
 }
-.file-name { flex: 1; }
-.file-date { color: #666; margin: 0 1rem; }
-.download-form { margin-left: auto; }
 
-/* ===== Upload Form ===== */
-.upload-form {
-    max-width: 400px;
-    margin: 0 auto;
-}
-.upload-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-}
-.upload-form input[type="file"] {
-    margin-bottom: 1rem;
+.file-name, .file-date {
+    flex: 1;
 }

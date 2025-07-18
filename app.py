@@ -218,6 +218,40 @@ def download(blob_name):
             'Content-Disposition': f'attachment; filename="{blob_name[:-4]}"'
         }
     )
+@app.route('/delete/<int:file_id>', methods=['POST'])
+@login_required
+def delete_file(file_id):
+    # 1) Look up the blob name and ownership
+    with pyodbc.connect(SQL_CONN_STR) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT blob_url FROM Files WHERE file_id = ? AND user_id = ?",
+            file_id, current_user.id
+        )
+        row = cur.fetchone()
+        if not row:
+            flash("File not found or unauthorized.", "danger")
+            return redirect(url_for('index'))
+        blob_name = row[0]
+
+        # 2) Delete metadata
+        cur.execute(
+            "DELETE FROM Files WHERE file_id = ?",
+            file_id
+        )
+        conn.commit()
+
+    # 3) Delete from Azure Blob
+    try:
+        container_client.get_blob_client(blob_name).delete_blob()
+    except Exception as e:
+        # if blob was missing, we’ve already removed DB entry
+        flash(f"Metadata removed but blob delete failed: {e}", "warning")
+    else:
+        flash("File deleted successfully.", "success")
+
+    return redirect(url_for('index'))
+
 
 
 if __name__ == '__main__':
